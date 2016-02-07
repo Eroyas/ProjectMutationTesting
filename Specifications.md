@@ -1,4 +1,4 @@
-#chaine de build
+#Chaine de build
 
 Concernant la chaîne de build elle est pilotée grâce à Maven, ses phases se décrivent de la manière suivante  : <br/>
 
