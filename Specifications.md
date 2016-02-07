@@ -58,7 +58,7 @@ Une des techniques qui permet de remédier à ce problème est le processus d’
 Nous allons donc prendre notre code métier sur lequel nous souhaitons tester nos tests et y introduire des mutants. <br/>
 
 
-**- Quelles mutations ?** <br/>
+- Quelles mutations ? <br/>
 
 Une mutation étant une modification du code source, nous allons donc effectuer différentes actions en introduisant <br/>
 différents bugs afin de voir la réaction des tests. Si nos tests passent toujours, c’est qu’ils ne sont pas pertinents,
