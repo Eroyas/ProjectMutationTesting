@@ -20,5 +20,15 @@
       <version>3.8.1</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+          <groupId>fr.inria.gforge.spoon</groupId>
+          <artifactId>spoon-core</artifactId>
+          <version>5.0.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jfrog.maven.annomojo</groupId>
+          <artifactId>maven-plugin-anno</artifactId>
+          <version>1.4.1</version>
+      </dependency>
   </dependencies>
 </project>
