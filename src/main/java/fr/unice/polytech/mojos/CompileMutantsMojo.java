@@ -10,6 +10,9 @@ import org.apache.maven.project.MavenProject;
 
 import javax.tools.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,10 +34,20 @@ public class CompileMutantsMojo extends AbstractMojo {
       //  JavaFileManager jfm = compiler.getStandardFileManager(null,null,null);
        // Iterable<? extends JavaFileObject> compUnits =
         StandardJavaFileManager fm = compiler.getStandardFileManager(null,null,null);
-        Iterable<? extends JavaFileObject> compUnits = fm.getJavaFileObjects(new File(project.getBasedir().toString()+"/src/main/java/tester/Iso"));
+        List<String> names = new ArrayList<>();
+        try {
+            Files.walk(Paths.get(project.getBasedir().toString()+"/src/main/java")).forEach(filePath -> {
+                if (Files.isRegularFile(filePath)) {
+                    names.add(filePath.toString());
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Iterable<? extends JavaFileObject> compUnits = fm.getJavaFileObjectsFromStrings(names);
 // set compiler's classpath to be same as the runtime's
         optionList.addAll(Arrays.asList("-classpath",System.getProperty("java.class.path")));
-        optionList.addAll(Arrays.asList("-d",project.getBasedir().toString()+"/target/generated-sources/mutations/src"));
+        optionList.addAll(Arrays.asList("-d",project.getBasedir().toString()+"/target"));
 
 
         JavaCompiler.CompilationTask task = compiler.getTask(null,fm,null,optionList,null,compUnits);
