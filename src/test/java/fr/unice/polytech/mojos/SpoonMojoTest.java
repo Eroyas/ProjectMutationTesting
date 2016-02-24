@@ -34,8 +34,5 @@ public class SpoonMojoTest
      * Rigourous Test :-)
      */
     public void testApp() throws MojoFailureException, MojoExecutionException {
-       SpoonMojo s = new SpoonMojo();
-        s.execute();
-
     }
 }
