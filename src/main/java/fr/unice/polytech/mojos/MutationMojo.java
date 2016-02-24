@@ -82,7 +82,7 @@ public class MutationMojo extends AbstractMojo {
 
             try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(project.getBasedir().toString()+"/target/generated-sources/mutations/src/main/java/"+klass.getQualifiedName().replace('.','/')+".java"), "utf-8"))) {
-                writer.write(klass.toString());
+                writer.write(klass.getPackage() + klass.toString());
             }
             catch (IOException d)
             {
