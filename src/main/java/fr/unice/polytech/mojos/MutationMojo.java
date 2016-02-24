@@ -28,6 +28,7 @@ public class MutationMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project}", required = true, readonly = false)
     private MavenProject project;
+
     public void execute() throws MojoExecutionException, MojoFailureException {
         System.out.println("#####################  my_plugin  #####################################\n");
 
@@ -77,6 +78,8 @@ public class MutationMojo extends AbstractMojo {
             // setting the package
             klass.setParent(origClass.getParent());
             System.out.println(klass);
+
+
             try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                     new FileOutputStream(project.getBasedir().toString()+"/target/generated-sources/mutations/src/main/java/"+klass.getQualifiedName().replace('.','/')+".java"), "utf-8"))) {
                 writer.write(klass.toString());

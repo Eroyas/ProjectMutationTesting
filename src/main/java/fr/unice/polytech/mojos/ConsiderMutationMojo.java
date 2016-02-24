@@ -12,7 +12,6 @@ import org.apache.maven.project.MavenProject;
  * @author tijani on 23/02/16.
  */
 @Mojo(name = "consider",defaultPhase = LifecyclePhase.GENERATE_RESOURCES)
-
 public class ConsiderMutationMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", required = true, readonly = false)
