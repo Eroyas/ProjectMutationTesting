@@ -2,6 +2,7 @@ package fr.unice.polytech.spoonProcesses;
 
 import spoon.reflect.code.CtBinaryOperator;
 import spoon.reflect.code.CtFor;
+import spoon.reflect.code.CtLoop;
 import spoon.reflect.declaration.CtElement;
 import spoon.reflect.visitor.filter.TypeFilter;
 
@@ -21,9 +22,9 @@ public class BinaryOpLoop extends BinaryOpMutation {
         }
         else
         {
-            CtBinaryOperator op = (CtBinaryOperator) candidate;
-            CtFor ctFor = candidate.getParent(new TypeFilter<>(CtFor.class));
-            System.out.println(ctFor);
+
+            CtLoop ctFor = candidate.getParent(new TypeFilter<>(CtLoop.class));
+            System.out.println("####################### CTFOR" + ctFor);
             return ctFor != null;
         }
     }

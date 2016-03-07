@@ -11,6 +11,7 @@ public class ComplexityLocator implements Locator {
 
     @Override
     public boolean toBeProcessed(CtClass ctClass) {
+        System.out.println("################## complexity : " + CodeMetrics.calculateComplexity(ctClass));
             return CodeMetrics.calculateComplexity(ctClass) > 21;
     }
 }

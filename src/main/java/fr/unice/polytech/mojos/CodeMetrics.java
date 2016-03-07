@@ -16,6 +16,10 @@ public class CodeMetrics {
 
     public static double calculateComplexity(CtClass cl)
     {
+        if(cl.getMethods().size() == 0)
+        {
+            return 1;
+        }
         Iterator<CtMethod> it = cl.getMethods().iterator();
         CtMethod meth;
         double complexity = 0;

@@ -20,6 +20,7 @@ public class BinaryOpMutation extends AbstractProcessor<CtElement> {
         if (!(candidate instanceof CtBinaryOperator)) {
             return;
         }
+
         CtBinaryOperator op = (CtBinaryOperator)candidate;
         op.setKind(BinaryOperatorKind.DIV);
     }
