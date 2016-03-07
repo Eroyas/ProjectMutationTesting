@@ -6,12 +6,13 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.stream.*;
+import javax.xml.stream.events.XMLEvent;
+import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.util.Scanner;
 
 /**
  * Created by Eroyas on 24/02/16.
@@ -23,11 +24,12 @@ public class ReportMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         try {
-            System.out.println("#### HTML ####\n...");
+            System.out.println("#### REPORT MOJO ####\n...");
             TransformerFactory factory = TransformerFactory.newInstance();
 
-            Source xmlDoc = new StreamSource("target/surefire-reports/TEST-ReportTest.xml");
-            Source xslDoc = new StreamSource(createXsl());
+            xmlFusion();
+            Source xmlDoc = new StreamSource("target/surefire-reports/TestsReport.xml");
+            Source xslDoc = new StreamSource(ReportMojo.class.getClassLoader().getResourceAsStream("xslDoc.xsl"));
 
             String outputFolder = "target/html-reports/";
 
@@ -41,61 +43,102 @@ public class ReportMojo extends AbstractMojo {
             Transformer transformer = factory.newTransformer(xslDoc);
             transformer.transform(xmlDoc, new StreamResult(htmlFile));
 
-            System.out.println("OK \n#### HTML ####");
+            filesComparator();
 
-        } catch(Exception e) {
+            System.out.println("OK \n#### REPORT MOJO ####");
+
+        } catch (TransformerException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    private File createXsl() {
+    private void xmlFusion() {
 
         try {
-            File xslDoc = new File("xslDoc.xsl");
-            FileWriter out = null;
-            out = new FileWriter(xslDoc);
-            out.write("<?xml version=\"1.0\"?>\n" +
-                      "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\">\n" +
-                      "\n" +
-                      "<xsl:template match=\"/\">\n" +
-                      "<html>\n" +
-                      "\n" +
-                      "   <head>\n" +
-                      "      <title>Test</title>\n" +
-                      "      <style type=\"text/css\">\n" +
-                      "        <!-- Style ici -->\n" +
-                      "      </style>\n" +
-                      "   </head>\n" +
-                      "\n" +
-                      "   <body>\n" +
-                      "      <table>\n" +
-                      "         <xsl:for-each select=\"testsuite\">\n" +
-                      "          <li>Nombres de tests lancé : <xsl:value-of select=\"@tests\"/></li>\n" +
-                      "          <li>Parmi eux <xsl:value-of select=\"@failures\"/> ont échoué..!</li>\n" +
-                      "          <ul>\n" +
-                      "            <xsl:for-each select=\"testcase\">\n" +
-                      "              <xsl:if test=\"failure\">" +
-                      "                <li>Le test : <xsl:value-of select=\"@name\"/> a echoué !</li>" +
-                      "              </xsl:if>" +
-                      "              <xsl:if test=\"not(failure)\">" +
-                      "                <li>Le test : <xsl:value-of select=\"@name\"/> a réussi !</li>" +
-                      "              </xsl:if>" +
-                      "            </xsl:for-each>\n" +
-                      "          </ul>\n" +
-                      "         </xsl:for-each>\n" +
-                      "      </table>\n" +
-                      "    </body>\n" +
-                      "</html>\n" +
-                      "</xsl:template>\n" +
-                      "</xsl:stylesheet>");
+            File oldReport = new File("target/surefire-reports/TestsReport.xml");
+            oldReport.delete();
 
-            out.close();
+            File dir = new File("target/surefire-reports");
+            File[] rootFiles = dir.listFiles();
 
-            return xslDoc;
-        } catch (IOException e) {
+            Writer xmlDoc = null;
+            xmlDoc = new FileWriter("target/surefire-reports/TestsReport.xml");
+
+            XMLOutputFactory xmlOutFactory = XMLOutputFactory.newFactory();
+            XMLEventWriter xmlEventWriter = xmlOutFactory.createXMLEventWriter(xmlDoc);
+            XMLEventFactory xmlEventFactory = XMLEventFactory.newFactory();
+
+            xmlEventWriter.add(xmlEventFactory.createStartDocument());
+            xmlEventWriter.add(xmlEventFactory.createStartElement("", null, "root"));
+
+            XMLInputFactory xmlInFactory = XMLInputFactory.newFactory();
+
+            for (File rootFile : rootFiles) {
+                if (rootFile.getAbsolutePath().endsWith(".xml")) {
+                    XMLEventReader xmlEventReader = xmlInFactory.createXMLEventReader(new StreamSource(rootFile));
+                    XMLEvent event = xmlEventReader.nextEvent();
+
+                    while (event.getEventType() != XMLEvent.START_ELEMENT) {
+                        event = xmlEventReader.nextEvent();
+                    }
+
+                    do {
+                        xmlEventWriter.add(event);
+                        event = xmlEventReader.nextEvent();
+                    } while (event.getEventType() != XMLEvent.END_DOCUMENT);
+
+                    xmlEventReader.close();
+                }
+            }
+
+            xmlEventWriter.add(xmlEventFactory.createEndElement("", null, "root"));
+            xmlEventWriter.add(xmlEventFactory.createEndDocument());
+
+            xmlEventWriter.close();
+            xmlDoc.close();
+        } catch (IOException | XMLStreamException e) {
             e.printStackTrace();
         }
-
-        return null;
     }
+
+    private void filesComparator() throws IOException {
+
+        File sDir = new File("src/main/java");
+        File mDir = new File("target/generated-sources/mutations/src/main/java");
+
+        File[] sFiles = sDir.listFiles();
+        File[] mFiles = mDir.listFiles();
+
+        for (File sFile : sFiles) {
+            if (sFile.getAbsolutePath().endsWith(".java")) {
+
+                for (File mFile : mFiles) {
+                    if (mFile.getAbsolutePath().endsWith(".java") && sFile.getName().equalsIgnoreCase(mFile.getName())) {
+
+                        compareFiles(new Scanner(sFile), new Scanner(mFile));
+                    }
+                }
+            }
+        }
+    }
+
+    private void compareFiles(Scanner sFile, Scanner mFile) {
+
+        String sLine ;
+        String mLine ;
+
+        int line = 1;
+
+        while (sFile.hasNextLine() && mFile.hasNextLine()) {
+            sLine = sFile.nextLine();
+            mLine = mFile.nextLine();
+
+            if (!sLine.equals(mLine)) {
+                System.out.println("Line " + line++);
+                System.out.println("< " + sLine);
+                System.out.println("> " + mLine + "\n");
+            }
+        }
+    }
+
 }
