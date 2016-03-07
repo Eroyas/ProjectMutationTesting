@@ -6,6 +6,7 @@ import org.junit.runner.Result;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.List;
 
 
 public class IsolatedTestRunner {
@@ -14,12 +15,12 @@ public class IsolatedTestRunner {
 
 
     // Do not rename.
-    public void runTests (String[] testClasses, URLClassLoader cl) {
+    public void runTests (List<String> testClasses, URLClassLoader cl) {
         // Load classes
-        Class<?>[] classes = new Class<?>[testClasses.length];
+        Class<?>[] classes = new Class<?>[testClasses.size()];
         System.out.println("init tab");
-        for (int i=0; i<testClasses.length; i++) {
-            String test =  testClasses[i];
+        for (int i=0; i<testClasses.size(); i++) {
+            String test =  testClasses.get(i);
             try {
                 System.out.println("conversion to class");
                 classes[i] = cl.loadClass(test);
@@ -33,9 +34,11 @@ public class IsolatedTestRunner {
         System.out.println(classes[0].toString());
         System.out.println("junit core");
         try {
-            Result r = JUnitCore.runClasses(classes[0]);
+            Result r = JUnitCore.runClasses(classes);
             System.out.println("resuuuuut");
-            System.out.println(r.getFailures().size());
+            System.out.println("########## nb failures : " + r.getFailures().size());
+            if(r.getFailures().size() != 0)
+            System.out.println(r.getFailures().get(0));
         }
         catch (Exception e)
         {

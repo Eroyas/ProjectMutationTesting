@@ -1,6 +1,6 @@
 package fr.unice.polytech.mojos;
 
-import fr.unice.polytech.spoonProcesses.BinaryOpMutation;
+import fr.unice.polytech.locators.Locator;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -8,14 +8,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
-import spoon.Launcher;
-import spoon.reflect.code.CtExpression;
-import spoon.reflect.code.CtStatement;
-import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtElement;
-import spoon.reflect.factory.Factory;
-import spoon.reflect.visitor.filter.TypeFilter;
+import spoon.processing.AbstractProcessor;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -29,95 +25,68 @@ public class MutationMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = false)
     private MavenProject project;
 
+    @Parameter(name = "processors",required = true, readonly = true)
+    private List<String> processors;
+
+    @Parameter(name = "locators", required = true, readonly = true)
+    private List<String> locators;
+
+    @Parameter(name = "packages",readonly = true)
+    private List<String> packages = new ArrayList<>();
+
+    public static int mutationsNumber;
+
+
+
     public void execute() throws MojoExecutionException, MojoFailureException {
+        mutationsNumber = (locators.size()+ packages.size()) * processors.size();
+        System.out.println("##################################### packages size" + packages.size());
+        int mutationsNumberCopy = mutationsNumber-1;
+        Mutator mutator;
         System.out.println("#####################  my_plugin  #####################################\n");
-        String destination = project.getBasedir().toString()+"/target/generated-sources/mutations/src";
-        new File(destination).mkdir();
-        cloneFolder(project.getBasedir().toString()+"/src",destination);
-        System.out.println("\n#######################################################################\n");
-        //JavaCompiler c  = ToolProvider.getSystemJavaCompiler();
-
-        getLog().info("totototo");
-        Launcher launcher = new Launcher();
-        /*
-        final String[] args = {
-                "-i" ,"src/main/java" ,"-o", "target/generated-sources/mutations/src/main/java"
-        };
-        launcher.setArgs(args);*/
-        launcher.addInputResource("src/main/java");
-        launcher.setSourceOutputDirectory("target/generated-sources/mutations/src/main/java");
-        launcher.run();
-        //launcher.buildModel();
-
-        BinaryOpMutation mutator = new BinaryOpMutation();
-        Factory factory = launcher.getFactory();
-        CtClass origClass = (CtClass) factory.Package().getRootPackage()
-                .getElements(new TypeFilter(CtClass.class)).get(0);
-
-        // now we apply a transformation
-        // we replace "+" and "*" by "-"
-        List<CtElement> elementsToBeMutated = origClass.getElements(mutator::isToBeProcessed);
-
-        for (CtElement e : elementsToBeMutated) {
-            // this loop is the trickiest part
-            // because we want one mutation after the other
-
-            // cloning the AST element
-            CtElement op = launcher.getFactory().Core().clone(e);
-
-            // mutate the element
-            mutator.process(op);
-
-            // temporarily replacing the original AST node with the mutated element
-            replace(e,op);
-
-            // creating a new class containing the mutating code
-            CtClass klass = launcher.getFactory().Core()
-                    .clone(op.getParent(CtClass.class));
-            // setting the package
-            klass.setParent(origClass.getParent());
-            System.out.println(klass);
-
-
-            try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(project.getBasedir().toString()+"/target/generated-sources/mutations/src/main/java/"+klass.getQualifiedName().replace('.','/')+".java"), "utf-8"))) {
-                writer.write("package " + klass.getPackage()+";\n" + klass.toString());
-            }
-            catch (IOException d)
+        for(int i=0; i < mutationsNumber;i++)
+        {
+            System.out.println(i);
+            String destination = project.getBasedir().toString()+"/target/generated-sources/mutations/m"+i+"/src";
+            new File(destination).mkdirs();
+            cloneFolder(project.getBasedir().toString()+"/src",destination);
+        }
+        try {
+        for (int i=0; i < processors.size();i++)
+        {
+            for (int j=0; j < locators.size();j++)
             {
-                d.printStackTrace();
+                mutator = new Mutator( project.getBasedir().toString()+"/target/generated-sources/mutations/m"+ mutationsNumberCopy +"/src/main/java/");
+
+                    mutator.mutate((Locator)Class.forName("fr.unice.polytech.locators."+locators.get(j)).newInstance(),(AbstractProcessor)Class.forName("fr.unice.polytech.spoonProcesses."+processors.get(i)).newInstance());
+                mutationsNumberCopy --;
             }
-            // adding the new mutant to the list
-            // restoring the original code
-            replace(op, e);
+
+            for (String aPackage : packages) {
+                System.out.println("jaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaamaaaaaaaaaaaaaaaaaaaaaaaaaais");
+                mutator = new Mutator(project.getBasedir().toString() + "/target/generated-sources/mutations/m" + mutationsNumberCopy + "/src/main/java/");
+                mutator.mutate((Locator) Class.forName("fr.unice.polytech.locators.PackageLocator").getConstructor(String.class).newInstance(aPackage), (AbstractProcessor) Class.forName("fr.unice.polytech.spoonProcesses." + processors.get(i)).newInstance());
+                mutationsNumberCopy--;
+            }
         }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        System.out.println("\n#######################################################################\n");
+
     }
 
-
-    private void replace(CtElement e, CtElement op) {
-        if (e instanceof CtStatement  && op instanceof CtStatement) {
-            ((CtStatement)e).replace((CtStatement) op);
-            return;
-        }
-        if (e instanceof CtExpression && op instanceof CtExpression) {
-            ((CtExpression)e).replace((CtExpression) op);
-            return;
-        }
-        throw new IllegalArgumentException(e.getClass()+" "+op.getClass());
-    }
-
-    // System.out.println(project.getTestCompileSourceRoots());
-    //   System.out.println(project.getCompileSourceRoots().remove(0));
-    ///home/user/Desktop/si4/semestre2/DevOps/mutation/DevObs_10/my-app/src/main/java
-    //project.addCompileSourceRoot(project.getBasedir().toString()+"/target/mutations/main/java/com/mycompany/app");
-
-    /**
-     System.out.println("avant   "+project.getBuild().getSourceDirectory());
-
-     project.getBuild().setSourceDirectory(project.getBasedir().toString() +
-     "/target/mutations/main/java");
-     System.out.println("apres  "+project.getBuild().getSourceDirectory());
-     **/
 
     /**
      * merci stackoverflow :)
