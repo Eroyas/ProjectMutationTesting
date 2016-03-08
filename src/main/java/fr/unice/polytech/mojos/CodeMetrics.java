@@ -23,6 +23,7 @@ public class CodeMetrics {
         Iterator<CtMethod> it = cl.getMethods().iterator();
         CtMethod meth;
         double complexity = 0;
+
         while(it.hasNext())
         {
             meth = it.next();
@@ -34,8 +35,22 @@ public class CodeMetrics {
         return complexity / cl.getMethods().size();
     }
 
-    public static int linesOfCode(CtMethod meth)
+    public static int linesOfCode(CtClass cl)
     {
-        return 0;
+        if(cl.getMethods().size() == 0)
+        {
+            return 1;
+        }
+        Iterator<CtMethod> it = cl.getMethods().iterator();
+        CtMethod meth;
+        int lines = 0;
+
+        while(it.hasNext())
+        {
+            meth = it.next();
+            lines = lines + meth.getBody().getStatements().size();
+        }
+        return (lines / cl.getMethods().size());
+
     }
 }
