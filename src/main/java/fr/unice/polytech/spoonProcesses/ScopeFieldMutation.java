@@ -10,7 +10,7 @@ import spoon.reflect.declaration.ModifierKind;
 /**
  * @author tijani on 05/03/16.
  */
-public class ScopeFeildMutation extends AbstractProcessor<CtElement> {
+public class ScopeFieldMutation extends AbstractProcessor<CtElement> {
 
     @Override
     public boolean isToBeProcessed(CtElement candidate) {

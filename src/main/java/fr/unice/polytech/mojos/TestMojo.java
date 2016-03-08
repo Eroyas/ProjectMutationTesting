@@ -10,6 +10,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -34,7 +35,8 @@ public class TestMojo extends AbstractMojo {
     private String qualifiedName;
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        for (int j = 0; j < MutationMojo.mutationsNumber; j++) {
+        File[] mutants = FileUtils.list(project.getBasedir()+"/target/mutants/");
+        for (File fi : mutants) {
             List<String> names = new ArrayList<>();
             Iterator<Artifact> it = project.getDependencyArtifacts().iterator();
             URL[] urls = new URL[project.getDependencyArtifacts().size() + 3];
@@ -53,7 +55,7 @@ public class TestMojo extends AbstractMojo {
 
             try {
 
-                urls[i] = Paths.get(project.getBasedir() + "/target/mutants/m"+j).toUri().toURL();
+                urls[i] = Paths.get(fi.getAbsolutePath()).toUri().toURL();
                 System.out.println(urls[i]);
                 urls[i + 1] = Paths.get(project.getBasedir() + "/target/test-classes/").toUri().toURL();
                 System.out.println(urls[i + 1]);

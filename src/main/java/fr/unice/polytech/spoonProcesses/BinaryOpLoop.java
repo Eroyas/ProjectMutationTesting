@@ -24,7 +24,6 @@ public class BinaryOpLoop extends BinaryOpMutation {
         {
 
             CtLoop ctFor = candidate.getParent(new TypeFilter<>(CtLoop.class));
-            System.out.println("####################### CTFOR" + ctFor);
             return ctFor != null;
         }
     }
