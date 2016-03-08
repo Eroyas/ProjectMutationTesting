@@ -40,7 +40,6 @@ public class MutationMojo extends AbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         mutationsNumber = (locators.size()+ packages.size()) * processors.size();
-        System.out.println("##################################### packages size" + packages.size());
         int mutationsNumberCopy = mutationsNumber-1;
         Mutator mutator;
         System.out.println("#####################  my_plugin  #####################################\n");
@@ -56,15 +55,14 @@ public class MutationMojo extends AbstractMojo {
         {
             for (int j=0; j < locators.size();j++)
             {
-                mutator = new Mutator( project.getBasedir().toString()+"/target/generated-sources/mutations/m"+ mutationsNumberCopy +"/src/main/java/");
+                mutator = new Mutator( project.getBasedir().toString()+"/target/generated-sources/mutations/m"+ mutationsNumberCopy);
 
                     mutator.mutate((Locator)Class.forName("fr.unice.polytech.locators."+locators.get(j)).newInstance(),(AbstractProcessor)Class.forName("fr.unice.polytech.spoonProcesses."+processors.get(i)).newInstance());
                 mutationsNumberCopy --;
             }
 
             for (String aPackage : packages) {
-                System.out.println("jaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaamaaaaaaaaaaaaaaaaaaaaaaaaaais");
-                mutator = new Mutator(project.getBasedir().toString() + "/target/generated-sources/mutations/m" + mutationsNumberCopy + "/src/main/java/");
+                mutator = new Mutator(project.getBasedir().toString() + "/target/generated-sources/mutations/m" + mutationsNumberCopy);
                 mutator.mutate((Locator) Class.forName("fr.unice.polytech.locators.PackageLocator").getConstructor(String.class).newInstance(aPackage), (AbstractProcessor) Class.forName("fr.unice.polytech.spoonProcesses." + processors.get(i)).newInstance());
                 mutationsNumberCopy--;
             }

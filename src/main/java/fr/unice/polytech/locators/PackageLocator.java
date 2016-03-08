@@ -18,7 +18,6 @@ public class PackageLocator implements Locator {
     public boolean toBeProcessed(CtClass ctClass) {
         String[] name = ctClass.getQualifiedName().split("\\.");
         String[] packageSplit = packageName.split("\\.");
-        System.out.println("###### size name : "+ name.length);
         if(name.length < 2)
         {
             name = new String[2];

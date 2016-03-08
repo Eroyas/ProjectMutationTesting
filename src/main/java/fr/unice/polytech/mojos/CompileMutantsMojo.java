@@ -28,16 +28,24 @@ public class CompileMutantsMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        for (int i = 0; i < MutationMojo.mutationsNumber; i++) {
+        File f = new File(project.getBasedir().toString()+"/target/generated-sources/mutations");
+        if(!f.exists())
+        {
+            f.mkdirs();
+        }
+        File[] tab = f.listFiles();
+
+
+        for (File fi : tab) {
+            String outputDirectory =  project.getBasedir().toString()+"/target/mutants/"+(fi.getAbsolutePath().substring(fi.getAbsolutePath().lastIndexOf("/"),fi.getAbsolutePath().length()));
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
             List<String> optionList = new ArrayList<>();
-            //  JavaFileManager jfm = compiler.getStandardFileManager(null,null,null);
-            // Iterable<? extends JavaFileObject> compUnits =
-            StandardJavaFileManager fm = compiler.getStandardFileManager(null, null, null);
+            DiagnosticCollector<JavaFileObject> diagnosticsCollector = new DiagnosticCollector<JavaFileObject>();
+            StandardJavaFileManager fm = compiler.getStandardFileManager(diagnosticsCollector, null, null);
             List<String> names = new ArrayList<>();
             try {
 
-                Files.walk(Paths.get(project.getBasedir().toString() + "/target/generated-sources/mutations/m"+i+"/")).forEach(filePath -> {
+                Files.walk(Paths.get(fi.getAbsolutePath())).forEach(filePath -> {
                     if (Files.isRegularFile(filePath)) {
                         System.out.println("compiling : " + filePath.toString());
                         names.add(filePath.toString());
@@ -49,15 +57,18 @@ public class CompileMutantsMojo extends AbstractMojo {
             Iterable<? extends JavaFileObject> compUnits = fm.getJavaFileObjectsFromStrings(names);
 // set compiler's classpath to be same as the runtime's
             optionList.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
-            File targetFile = new File(project.getBasedir().toString() + "/target/mutants/m"+i);
+            File targetFile = new File(outputDirectory);
             if (!targetFile.exists()) {
                 targetFile.mkdirs();
             }
-            optionList.addAll(Arrays.asList("-d", project.getBasedir().toString() + "/target/mutants/m"+i));
-
-
-            JavaCompiler.CompilationTask task = compiler.getTask(null, fm, null, optionList, null, compUnits);
+            optionList.addAll(Arrays.asList("-d",outputDirectory));
+            JavaCompiler.CompilationTask task = compiler.getTask(null, fm, diagnosticsCollector, optionList, null, compUnits);
             task.call();
+            if(diagnosticsCollector.getDiagnostics().size() != 0)
+            {
+                System.out.println("########## mutant : " + fi.getName() + " is stillborn");
+                fi.delete();
+            }
 
         }
     }
