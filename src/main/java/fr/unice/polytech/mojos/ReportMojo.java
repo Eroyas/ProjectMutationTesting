@@ -14,7 +14,6 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * Created by Eroyas on 24/02/16.
@@ -45,7 +44,7 @@ public class ReportMojo extends AbstractMojo {
             Transformer transformer = factory.newTransformer(xslDoc);
             transformer.transform(xmlDoc, new StreamResult(htmlFile));
 
-            filesComparator();
+            Comparator.filesComparator();
 
             System.out.println("OK \n#### REPORT MOJO ####");
 
@@ -63,9 +62,7 @@ public class ReportMojo extends AbstractMojo {
             for(File mutantFolder : dir) {
                 for(File singleXml : mutantFolder.listFiles()) {
                     rootFiles.add(singleXml);
-
                 }
-
             }
 
             Writer xmlDoc = null;
@@ -113,45 +110,4 @@ public class ReportMojo extends AbstractMojo {
             e.printStackTrace();
         }
     }
-
-    private void filesComparator() throws IOException {
-
-        File sDir = new File("src/main/java");
-        File mDir = new File("target/generated-sources/mutations/src/main/java");
-
-        File[] sFiles = sDir.listFiles();
-        File[] mFiles = mDir.listFiles();
-
-        for (File sFile : sFiles) {
-            if (sFile.getAbsolutePath().endsWith(".java")) {
-
-                for (File mFile : mFiles) {
-                    if (mFile.getAbsolutePath().endsWith(".java") && sFile.getName().equalsIgnoreCase(mFile.getName())) {
-
-                        compareFiles(new Scanner(sFile), new Scanner(mFile));
-                    }
-                }
-            }
-        }
-    }
-
-    private void compareFiles(Scanner sFile, Scanner mFile) {
-
-        String sLine ;
-        String mLine ;
-
-        int line = 1;
-
-        while (sFile.hasNextLine() && mFile.hasNextLine()) {
-            sLine = sFile.nextLine();
-            mLine = mFile.nextLine();
-
-            if (!sLine.equals(mLine)) {
-                System.out.println("Line " + line++);
-                System.out.println("< " + sLine);
-                System.out.println("> " + mLine + "\n");
-            }
-        }
-    }
-
 }
