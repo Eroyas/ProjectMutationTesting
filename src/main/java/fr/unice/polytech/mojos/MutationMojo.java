@@ -48,7 +48,7 @@ public class MutationMojo extends AbstractMojo {
             System.out.println(i);
             String destination = project.getBasedir().toString()+"/target/generated-sources/mutations/m"+i+"/src";
             new File(destination).mkdirs();
-            cloneFolder(project.getBasedir().toString()+"/src",destination);
+            FileUtils.cloneFolder(project.getBasedir().toString() + "/src", destination);
         }
         try {
         for (int i=0; i < processors.size();i++)
@@ -91,18 +91,5 @@ public class MutationMojo extends AbstractMojo {
      * @param source
      * @param target
      */
-    public static void cloneFolder(String source, String target) {
-        File targetFile = new File(target);
-        if (!targetFile.exists()) {
-            targetFile.mkdir();
-        }
-        for (File f : new File(source).listFiles()) {
-            if (f.isDirectory()) {
-                String append = "/" + f.getName();
-                System.out.println("Creating '" + target + append + "': "
-                        + new File(target + append).mkdir());
-                cloneFolder(source + append, target + append);
-            }
-        }
-    }
+
 }

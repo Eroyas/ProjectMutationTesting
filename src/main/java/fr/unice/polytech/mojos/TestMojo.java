@@ -36,6 +36,10 @@ public class TestMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         File[] mutants = FileUtils.list(project.getBasedir()+"/target/mutants/");
+        if(!Files.exists(Paths.get(project.getBasedir()+"/target/surefire-reports/mutants/")))
+        {
+            new File(project.getBasedir()+"/target/surefire-reports/mutants/").mkdirs();
+        }
         for (File fi : mutants) {
             List<String> names = new ArrayList<>();
             Iterator<Artifact> it = project.getDependencyArtifacts().iterator();
@@ -74,7 +78,7 @@ public class TestMojo extends AbstractMojo {
                     }
                 });
                 Class<?> classRunner = Class.forName("fr.unice.polytech.mojos.IsolatedTestRunner", true, cl);
-                Object runner = classRunner.newInstance();
+                Object runner = classRunner.getConstructor(String.class).newInstance(project.getBasedir() + "/target/surefire-reports/mutants/" + fi.getName());
                 Method runMethod = classRunner.getMethod("runTests", List.class, URLClassLoader.class);
                 runMethod.invoke(runner, names, cl);
 

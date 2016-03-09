@@ -2,20 +2,23 @@ package fr.unice.polytech.mojos;
 
 import org.junit.runner.Result;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Created by Eroyas on 09/03/16.
  */
 public class JUnitResultProducer {
 
-    public static void getResultContent(Result result, Class<?>[] classes) {
-
-        String filePath = "target/surefire-reports";
-
-        double time = result.getRunTime();
+    public static void getResultContent(String path,Result result, Class<?>[] classes) {
+        if(!Files.exists(Paths.get(path)))
+        {
+            new File(path).mkdirs();
+        }
         int numberOfTest = result.getRunCount();
         int numberOfTestFail = result.getFailureCount();
         int numberOfTestIgnore = result.getIgnoreCount();
@@ -39,7 +42,7 @@ public class JUnitResultProducer {
                 myContent.append("name=\"" + methods[j].getName() + "\">\n");
 
                 for (int k = 0; k < result.getFailures().size(); k++) {
-
+                    System.out.println("################ meth de test :" + methods[j].getName() + "############## failure :" +result.getFailures().get(k).getDescription().getMethodName() );
                     if (methods[j].getName().equalsIgnoreCase(result.getFailures().get(k).getDescription().getMethodName())) {
                         myContent.append("<failure type=\"" + result.getFailures().get(k).getException() + "\">");
                         myContent.append("</failure>\n");
@@ -51,7 +54,7 @@ public class JUnitResultProducer {
 
             myContent.append("</testsuite>\n");
 
-            writeReportFile(filePath + "/" + reportFileName, myContent);
+            writeReportFile(path + "/" + reportFileName, myContent);
         }
     }
 

@@ -8,6 +8,12 @@ import java.util.List;
 
 public class IsolatedTestRunner {
 
+    private String path;
+
+    public IsolatedTestRunner(String path) {
+        this.path = path;
+    }
+
     // Do not rename.
     public void runTests (List<String> testClasses, URLClassLoader cl) {
 
@@ -34,7 +40,7 @@ public class IsolatedTestRunner {
 
             Result result = jUnitCore.run(classes);
 
-            JUnitResultProducer.getResultContent(result, classes);
+            JUnitResultProducer.getResultContent(this.path,result, classes);
 
             System.out.println("OK \n#### ISOLATED TEST RUNNER ####");
         } catch (Exception e) {}

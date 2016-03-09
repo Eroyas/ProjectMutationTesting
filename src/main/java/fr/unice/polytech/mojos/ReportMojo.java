@@ -12,6 +12,8 @@ import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -55,11 +57,16 @@ public class ReportMojo extends AbstractMojo {
     private void xmlFusion() {
 
         try {
-            File oldReport = new File("target/surefire-reports/TestsReport.xml");
-            oldReport.delete();
 
-            File dir = new File("target/surefire-reports");
-            File[] rootFiles = dir.listFiles();
+            File[] dir = FileUtils.list("target/surefire-reports/mutants/");
+            List<File> rootFiles = new ArrayList<>();
+            for(File mutantFolder : dir) {
+                for(File singleXml : mutantFolder.listFiles()) {
+                    rootFiles.add(singleXml);
+
+                }
+
+            }
 
             Writer xmlDoc = null;
             xmlDoc = new FileWriter("target/surefire-reports/TestsReport.xml");
@@ -90,6 +97,12 @@ public class ReportMojo extends AbstractMojo {
                     xmlEventReader.close();
                 }
             }
+
+            int stillBorn = FileUtils.list("target/generated-sources/mutations/").length - FileUtils.list("target/mutants/").length;
+
+            xmlEventWriter.add(xmlEventFactory.createStartElement("", null, "stillborn"));
+            xmlEventWriter.add(xmlEventFactory.createAttribute("stillborn", String.valueOf(stillBorn)));
+            xmlEventWriter.add(xmlEventFactory.createEndElement("", null, "stillborn"));
 
             xmlEventWriter.add(xmlEventFactory.createEndElement("", null, "root"));
             xmlEventWriter.add(xmlEventFactory.createEndDocument());

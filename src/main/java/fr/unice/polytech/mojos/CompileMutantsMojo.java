@@ -12,6 +12,7 @@ import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,8 +67,13 @@ public class CompileMutantsMojo extends AbstractMojo {
             task.call();
             if(diagnosticsCollector.getDiagnostics().size() != 0)
             {
-                System.out.println("########## mutant : " + fi.getName() + " is stillborn");
-                fi.delete();
+                System.out.println("########## mutant : " + fi.getAbsolutePath() + " is stillborn");
+                try {
+                    Files.delete(Paths.get(project.getBasedir()+"/target/mutants/"+fi.getName()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
 
         }

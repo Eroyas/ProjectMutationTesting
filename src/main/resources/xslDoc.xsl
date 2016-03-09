@@ -36,6 +36,10 @@
                     <xsl:value-of select="sum(//testsuite/@skipped)"/>
                 </xsl:variable>
 
+                <xsl:variable name="varStillborn">
+                    <xsl:value-of select="//stillborn/@stillborn"/>
+                </xsl:variable>
+
                 <xsl:variable name="varSuccess">
                     <xsl:value-of select="($varTests - $varFailures - $varSkipped)"/>
                 </xsl:variable>
@@ -87,6 +91,10 @@
                                     name: 'Ignored',
                                     y:  <xsl:value-of select="$varSkipped"/>,
                                     color :'yellow',
+                                }, {
+                                    name: 'Stillborn',
+                                    y:  <xsl:value-of select="$varStillborn"/>,
+                                    color : 'black',
                                 }]
                             }]
                         });
@@ -146,7 +154,8 @@
                                 <p>voici les resultats globaux : </p>
                                 <p>Il y a eu <xsl:value-of select="$varTests"/> test(s) lancé(s)</p>
                                 <p class="text-success">dont <xsl:value-of select="$varSuccess"/> fini(s) avec succè(s),</p>
-                                <p class="text-danger"><xsl:value-of select="$varFailures"/> fini(s) en échec(s)</p>
+                                <p class="text-danger"><xsl:value-of select="$varFailures"/> fini(s) en échec(s),</p>
+                                <p><xsl:value-of select="$varStillborn"/> mort-née(s)</p>
                                 <p class="text-warning">et <xsl:value-of select="$varSkipped"/> ignoré(s).</p>
                             </div>
                             <div class="col-lg-7 col-md-6 col-sm-5">
