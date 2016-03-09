@@ -22,7 +22,7 @@
                 <script src="https://code.highcharts.com/highcharts.js"></script>
                 <script src="https://code.highcharts.com/modules/exporting.js"></script>
             </head>
-            <body>
+            <body style="background-color: white; color: black;" >
 
                 <xsl:variable name="varTests">
                     <xsl:value-of select="sum(//testsuite/@tests)"/>
@@ -32,12 +32,12 @@
                     <xsl:value-of select="sum(//testsuite/@failures)"/>
                 </xsl:variable>
 
-                <xsl:variable name="varSuccess">
-                    <xsl:value-of select="($varTests - $varFailures)"/>
-                </xsl:variable>
-
                 <xsl:variable name="varSkipped">
                     <xsl:value-of select="sum(//testsuite/@skipped)"/>
+                </xsl:variable>
+
+                <xsl:variable name="varSuccess">
+                    <xsl:value-of select="($varTests - $varFailures - $varSkipped)"/>
                 </xsl:variable>
 
                 <!-- SCRIPT -->
@@ -137,17 +137,17 @@
 
                 </div>
 
-                <div class="container" style="color: black; background-color: white; -moz-border-radius: 10px; -webkit-border-radius: 10px; border-radius: 10px;">
+                <div class="container">
 
                     <div>
                         <div class="row" style="font-size: 34px; margin-bottom: 1px;">
                             <div class="col-lg-5 col-md-6 col-sm-7">
                                 <p style="font-weight: bold;">Une vue d'ensemble,</p>
                                 <p>voici les resultats globaux : </p>
-                                <p class="text-primary">Il y a eu <xsl:value-of select="$varTests"/> tests lancé</p>
-                                <p class="text-success">dont <xsl:value-of select="$varSuccess"/> fini avec succès,</p>
-                                <p class="text-danger"><xsl:value-of select="$varFailures"/> fini en échec</p>
-                                <p class="text-warning">et <xsl:value-of select="$varSkipped"/> ignoré.</p>
+                                <p>Il y a eu <xsl:value-of select="$varTests"/> test(s) lancé(s)</p>
+                                <p class="text-success">dont <xsl:value-of select="$varSuccess"/> fini(s) avec succè(s),</p>
+                                <p class="text-danger"><xsl:value-of select="$varFailures"/> fini(s) en échec(s)</p>
+                                <p class="text-warning">et <xsl:value-of select="$varSkipped"/> ignoré(s).</p>
                             </div>
                             <div class="col-lg-7 col-md-6 col-sm-5">
                                 <div id="chart" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
