@@ -12,6 +12,7 @@ import org.apache.maven.project.MavenProject;
 import org.jdom.*;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by Eroyas on 10/03/16.
@@ -22,8 +23,7 @@ public class DependencyResolutionMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = false)
     private MavenProject project;
 
-    private Element racine;
-    private Document document;
+    Namespace ns = Namespace.getNamespace("http://maven.apache.org/POM/4.0.0");
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -46,19 +46,29 @@ public class DependencyResolutionMojo extends AbstractMojo {
         hostPath = hostPath.substring(0, hostPath.lastIndexOf("/"));
         hostPath = hostPath + "/my-app-1.0-SNAPSHOT.pom";
 
-        JDOM jdom = new JDOM(pluginPath);
+        JDOM jdomPlugin = new JDOM(pluginPath);
+        JDOM jdomHost = new JDOM(hostPath);
 
-        jdom.affiche();
+        List listDependencies = jdomHost.getRacine().getChildren("dependencies", ns);
 
-        /*
-        copier la balise "repositories";
+        Iterator i = listDependencies.iterator();
 
-        coller dans le pom du .m2;
+        while(i.hasNext()) {
+            Element current = (Element)i.next();
 
-        copier la balise "dependencies";
+            current.addContent(jdomPlugin.getRacine().getChildren("dependency", ns));
+        }
 
-        coller dans le pom du .m2;
-        */
+        List listRepositories = jdomHost.getRacine().getChildren("repositories", ns);
+
+        Iterator j = listRepositories.iterator();
+
+        while(j.hasNext()) {
+            Element current = (Element)i.next();
+
+            current.addContent(jdomPlugin.getRacine().getChildren("repository", ns));
+        }
+
         System.out.println("OK \n#### DEPENDENCY RESOLUTION MOJO ####");
     }
 }

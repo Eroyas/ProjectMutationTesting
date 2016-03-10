@@ -11,29 +11,31 @@ import java.util.Iterator;
  */
 public class JDOM {
 
+    Namespace ns = Namespace.getNamespace("http://maven.apache.org/POM/4.0.0");
     static org.jdom.Document document;
     static Element racine;
 
     public JDOM(String path) {
         try {
             SAXBuilder sxb = new SAXBuilder();
-            document = sxb.build(new File(path));
-            racine = document.getRootElement();
+            this.document = sxb.build(new File(path));
+            this.racine = this.document.getRootElement();
         } catch (Exception e) {}
     }
 
-    public void affiche() {
-        Namespace ns =  Namespace.getNamespace("http://maven.apache.org/POM/4.0.0");
-        List listElement = racine.getChildren("modelVersion",ns); // ici on essaye de récup..
-        List listElement2 = racine.getContent();
-        System.out.println(racine.getName()); // OK !! RACINE = project
-        System.out.println(listElement); // MAIS ICI vide..
-        System.out.println(listElement2);
+    public Document getDocument() {
+        return document;
+    }
 
-        Iterator i = listElement.iterator();
-        while(i.hasNext()) {
-            Element courant = (Element)i.next();
-            System.out.println(courant.getParent());
-        }
+    public void setDocument(Document document) {
+        JDOM.document = document;
+    }
+
+    public Element getRacine() {
+        return racine;
+    }
+
+    public void setRacine(Element racine) {
+        JDOM.racine = racine;
     }
 }
