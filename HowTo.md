@@ -57,15 +57,15 @@ Result result = jUnitCore.run(classes);
 
 
 ### Produire un rapport HTML ###
-La production de notre rapport au format HTML se fait en 4 étapes. Lors des tests effectués par le JUnitCore, on analyse le résultat de ces tests pour produire un XML par test.
+La production de notre rapport au format HTML se fait en 4 étapes. Lors des tests effectués par le JUnitCore, on analyse le résultat de ces tests pour produire un XML par test grâce au "JUnitResultProducer".
 
 INTRODUIRE CODE / IMAGE
 
-Une fois que tous les tests sont terminés, on récupère chaque fichier XML produits que l'on fusionne en un unique XML grâce au "JUnitResultProducer".
+Une fois que tous les tests sont terminés, on récupère chaque fichier XML produits que l'on fusionne en un unique XML. Cette étape est effectué grâce à la methode "xmlFusion" de notre classe "ReportMojo".
 
 INTRODUIRE CODE / IMAGE
 
-Pour convertir cet unique XML en HTML, on utilise une transformation XSL qui nous permet d'afficher le nombre total de tests effectués, le nombre total de tests en erreur, et le nombre total de tests qui ont réussis. Ensuite, on afficher le résultat, test par test,  en détaillant pour chacun ceux qui ont réussi et ceux qui ont échoué.
+Pour convertir cet unique XML en HTML, on utilise une transformation XSL qui nous permet d'afficher le nombre total de tests effectués, le nombre total de tests en erreur, et le nombre total de tests qui ont réussis. Ensuite, on afficher le résultat, test par test, en détaillant pour chacun ceux qui ont réussi et ceux qui ont échoué.
 
 INTRODUIRE CODE / IMAGE
 
