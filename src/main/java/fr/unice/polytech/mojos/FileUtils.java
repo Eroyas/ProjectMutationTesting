@@ -10,7 +10,7 @@ import java.util.List;
  */
 public class FileUtils {
 
-    public static void listeRepertoire(File path, List<String> allFiles) {
+    public static void listeRepertoire(File path, List<File> allFiles) {
 
         if (path.isDirectory()) {
             File[] list = path.listFiles();
@@ -22,13 +22,11 @@ public class FileUtils {
                 System.err.println(path + " : Erreur de lecture.");
             }
         } else {
-            String currentFilePath = path.getAbsolutePath();
-            allFiles.add(currentFilePath);
+            allFiles.add(path.getAbsoluteFile());
         }
     }
 
-    public static File[] list(String path)
-    {
+    public static File[] list(String path) {
         File f = new File(path);
         if(!f.exists())
         {
@@ -60,5 +58,4 @@ public class FileUtils {
             }
         }
     }
-
 }
