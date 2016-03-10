@@ -14,11 +14,12 @@ import java.nio.file.Paths;
  */
 public class JUnitResultProducer {
 
-    public static void getResultContent(String path,Result result, Class<?>[] classes) {
-        if(!Files.exists(Paths.get(path)))
-        {
+    public static void getResultContent(String path, Result result, Class<?>[] classes) {
+
+        if(!Files.exists(Paths.get(path))) {
             new File(path).mkdirs();
         }
+
         int numberOfTest = result.getRunCount();
         int numberOfTestFail = result.getFailureCount();
         int numberOfTestIgnore = result.getIgnoreCount();

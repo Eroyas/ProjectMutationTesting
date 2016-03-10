@@ -26,8 +26,6 @@ public class ReportMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = false)
     private MavenProject project;
 
-
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
