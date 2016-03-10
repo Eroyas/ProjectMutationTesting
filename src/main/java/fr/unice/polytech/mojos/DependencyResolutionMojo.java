@@ -49,25 +49,25 @@ public class DependencyResolutionMojo extends AbstractMojo {
         JDOM jdomPlugin = new JDOM(pluginPath);
         JDOM jdomHost = new JDOM(hostPath);
 
-        List listDependencies = jdomHost.getRacine().getChildren("dependencies", ns);
+        List listDependencies = jdomPlugin.getRacine().getChildren("dependencies", ns);
 
         Iterator i = listDependencies.iterator();
 
         while(i.hasNext()) {
             Element current = (Element)i.next();
 
-            current.addContent(jdomPlugin.getRacine().getChildren("dependency", ns));
+            current.addContent(jdomHost.getRacine().getChildren("dependency", ns));
         }
 
-        List listRepositories = jdomHost.getRacine().getChildren("repositories", ns);
+        /*List listRepositories = jdomPlugin.getRacine().getChildren("repository", ns);
 
         Iterator j = listRepositories.iterator();
 
         while(j.hasNext()) {
             Element current = (Element)j.next();
 
-            current.addContent(jdomPlugin.getRacine().getChildren("repository", ns));
-        }
+            current.addContent(jdomHost.getRacine().getChildren("repositories", ns));
+        }*/
 
         System.out.println("OK \n#### DEPENDENCY RESOLUTION MOJO ####");
     }
