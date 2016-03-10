@@ -49,7 +49,7 @@ public class ReportMojo extends AbstractMojo {
             Transformer transformer = factory.newTransformer(xslDoc);
             transformer.transform(xmlDoc, new StreamResult(htmlFile));
 
-            Comparator.filesComparator((String) project.getCompileSourceRoots().get(0));
+            //Comparator.filesComparator((String) project.getCompileSourceRoots().get(0));
 
             System.out.println("OK \n#### REPORT MOJO ####");
 

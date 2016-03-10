@@ -22,10 +22,10 @@ public class JDOM {
         } catch (Exception e) {}
     }
 
-    static void affiche() {
-        List listElement = racine.getChildren("modelVersion"); // ici on essaye de récup..
+    public void affiche() {
+        Namespace ns =  Namespace.getNamespace("http://maven.apache.org/POM/4.0.0");
+        List listElement = racine.getChildren("modelVersion",ns); // ici on essaye de récup..
         List listElement2 = racine.getContent();
-
         System.out.println(racine.getName()); // OK !! RACINE = project
         System.out.println(listElement); // MAIS ICI vide..
         System.out.println(listElement2);

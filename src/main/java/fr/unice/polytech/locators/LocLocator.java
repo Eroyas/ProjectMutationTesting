@@ -8,14 +8,10 @@ import spoon.reflect.declaration.CtClass;
  */
 public class LocLocator implements Locator {
 
-    private int loc;
 
-    public LocLocator(int loc) {
-        this.loc = loc;
-    }
 
     @Override
     public boolean toBeProcessed(CtClass ctClass) {
-        return CodeMetrics.linesOfCode(ctClass) > loc;
+        return CodeMetrics.linesOfCode(ctClass) > 35;
     }
 }
