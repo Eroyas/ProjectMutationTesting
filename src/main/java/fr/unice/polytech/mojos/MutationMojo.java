@@ -1,6 +1,8 @@
 package fr.unice.polytech.mojos;
 
 import fr.unice.polytech.locators.Locator;
+import fr.unice.polytech.mojos.util.FileUtils;
+import fr.unice.polytech.mojos.wrappers.Mutator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -12,12 +14,6 @@ import org.apache.maven.project.MavenProject;
 import spoon.processing.AbstractProcessor;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

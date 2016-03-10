@@ -1,4 +1,4 @@
-package fr.unice.polytech.mojos;
+package fr.unice.polytech.mojos.util;
 
 import java.io.File;
 import java.io.IOException;

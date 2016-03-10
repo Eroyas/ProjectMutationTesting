@@ -1,7 +1,7 @@
 package fr.unice.polytech.mojos;
 
+import fr.unice.polytech.mojos.util.FileUtils;
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -11,7 +11,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URLClassLoader;
@@ -74,7 +73,7 @@ public class TestMojo extends AbstractMojo {
 
                 System.out.println("[MU-TEST] Testing : " + names);
                 // get class
-                Class<?> classRunner = Class.forName("fr.unice.polytech.mojos.IsolatedTestRunner", true, cl);
+                Class<?> classRunner = Class.forName("fr.unice.polytech.mojos.wrappers.IsolatedTestRunner", true, cl);
                 // invoke constructor
                 Object runner = classRunner.getConstructor(String.class).newInstance(project.getBasedir() + "/target/surefire-reports/mutants/" + fi.getName());
                 // get method runTests

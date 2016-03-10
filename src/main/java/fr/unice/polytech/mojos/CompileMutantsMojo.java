@@ -100,10 +100,10 @@ public class CompileMutantsMojo extends AbstractMojo {
             // call compiler
             JavaCompiler.CompilationTask task = compiler.getTask(null, fm, diagnosticsCollector, optionList, null, compUnits);
             task.call();
-            // if no error
+            // if erros
             if(diagnosticsCollector.getDiagnostics().size() != 0)
             {
-                System.out.println("[MU-TEST] Mutant : " + fi.getAbsolutePath() + " is well born !");
+                System.out.println("[MU-TEST] Mutant : " + fi.getAbsolutePath() + " is still born !");
                 try {
                     Files.delete(Paths.get(project.getBasedir()+"/target/mutants/"+fi.getName()));
                 } catch (IOException e) {

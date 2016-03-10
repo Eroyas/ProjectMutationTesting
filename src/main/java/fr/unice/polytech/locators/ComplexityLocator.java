@@ -1,6 +1,5 @@
 package fr.unice.polytech.locators;
 
-import fr.unice.polytech.mojos.CodeMetrics;
 import spoon.reflect.declaration.CtClass;
 
 /**
