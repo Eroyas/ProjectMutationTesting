@@ -38,17 +38,18 @@ La génération de mutants qui est possible grâce au goal "generate-mutations",
 
 ### Compiler et exécuter les mutants ###
 Une fois que tous les mutants sont générés, la classe "CompileMutantsMojo" permet de les compiler.
-pour les compiler on utilises le javaCompiler en lui spécifiant les sources à compiler, le classpath et le chemin de sortie, puis on lance la tache de compilation.
+Pour les compiler, on utilise le JavaCompiler en lui spécifiant les sources à compiler, le classpath et le chemin de sortie. Puis on lance la tâche de compilation.
 
-Pour exécuter les tests sur les mutants créés, on utilise la réflexion de Java pour appeler dynamiquement la méthode "runTests" de "IsolatedTestRunner" avec deux paramètres : une liste de classe à tester et un ClassLoader. La liste de classe a été calculée par "TestMojo"
+Pour exécuter les tests sur les mutants créés, on utilise la réflexion de Java pour appeler dynamiquement la méthode "runTests" de "IsolatedTestRunner" avec deux paramètres : une liste de classe à tester et un ClassLoader. La liste de classe ayant été calculée par "TestMojo".
+
 ~~~Java
-Class classRunner = Class.forName("fr.unice.polytech.mojos.IsolatedTestRunner", true, cl);
+Class<?> classRunner = Class.forName("fr.unice.polytech.mojos.IsolatedTestRunner", true, cl);
 Object runner = classRunner.getConstructor(String.class).newInstance(project.getBasedir() + "/target/surefire-reports/mutants/" + fi.getName());
 Method runMethod = classRunner.getMethod("runTests", List.class, URLClassLoader.class);
 runMethod.invoke(runner, names, cl);
 ~~~
 
-La méthode "runTests" se charge d''invoquer JUnitCore pour exécuter les tests.
+La méthode "runTests" se charge d'invoquer JUnitCore pour exécuter les tests.
 
 ~~~Java
 ...
@@ -74,7 +75,7 @@ JUnitResultProducer.getResultContent(path, result, classes);
 ...
 ~~~
 
-Une fois que tous les tests sont terminés, on récupère chaque fichier XML produits que l'on fusionne en un unique XML. Cette étape est effectué grâce à la methode "xmlFusion" de notre classe "ReportMojo".
+Une fois que tous les tests sont terminés, on récupère chaque fichier XML produit que l'on fusionne en un unique XML. Cette étape est effectuée grâce à la methode "xmlFusion" de notre classe "ReportMojo".
 
 ~~~Java
 ...
@@ -84,7 +85,7 @@ xmlFusion();
 ~~~
 ~~~Java
 ...
-// Dans celle-ci on defini les répertoires mutants et le fichier XML a produire :
+// Dans celle-ci on definit les répertoires mutants et le fichier XML a produire :
 File[] dir = FileUtils.list("target/surefire-reports/mutants/");
 ...
 xmlDoc = new FileWriter("target/surefire-reports/TestsReport.xml");
@@ -92,7 +93,7 @@ xmlDoc = new FileWriter("target/surefire-reports/TestsReport.xml");
 // Et on fusionne.
 ~~~
 
-Pour convertir cet unique XML en HTML, on utilise une transformation XSL qui nous permet d'afficher le nombre total de tests effectués, le nombre total de tests en erreur, et le nombre total de tests qui ont réussis. Ensuite, on afficher le résultat, test par test, en détaillant pour chacun ceux qui ont réussi et ceux qui ont échoué.
+Pour convertir cet unique XML en HTML, on utilise une transformation XSL qui nous permet d'afficher le nombre total de tests effectués, le nombre total de tests en erreur, et le nombre total de tests qui ont réussis. Ensuite, on affiche le résultat, test par test, en détaillant pour chacun ceux qui ont réussi et ceux qui ont échoué.
 
 
 De manière à avoir un rendu plus esthétique et plus lisible, on utilise Bootstrap  pour afficher les informations en couleurs (Vert les tests sont OK, jaune ignorés, rouge échoués, et noir "mort-nés"). HighChart permet une lecture plus aisée des résultats puisque l'on les affiche  sous forme de diagramme circulaire.
@@ -105,7 +106,7 @@ De manière à avoir un rendu plus esthétique et plus lisible, on utilise Boots
 
 ## 2. Les processeurs ##
 
-Le framework µTest dispose de diférents type de processeurs et sont au nombre de sept. Chaque processeur est construit sur la même base : une fonction isToBeProcessed qui permet de savoir si l'on doit ou non lancer la fonction "process" sur cet élément, et la fonction "process" qui permet de prendre l'élément et de le modifier.
+Le framework µTest dispose de diférents type de processeurs et sont au nombre de sept. Chaque processeur est construit sur la même base : une fonction "isToBeProcessed" qui permet de savoir si l'on doit ou non lancer la fonction "process" sur cet élément, et la fonction "process" qui permet de prendre l'élément et de le modifier.
 
 
 ### Processeur BinaryOpMutation ###
@@ -160,7 +161,7 @@ if(expr.getKind().equals(BinaryOperatorKind.LT) || expr.getKind().equals(BinaryO
 
 ## 3 . Les sélecteurs ##
 
-Les sélecteurs sont permettent de localiser des elements du code sur les quelles on appliquera les mutation. Le framework µTest dispose de diférents type de sélecteurs.
+Les sélecteurs permettent de localiser des éléments du code sur lesquels on appliquera les mutations. Le framework µTest dispose de diférents types de sélecteurs.
 
 ### Package ###
 Définir un package dans le pom permet de dire que les mutations vont se porter uniquement sur les classes du package spécifié. Il est possible de définir plusieurs balises <package> englobées d'une unique balise <packages>.
@@ -168,16 +169,16 @@ Définir un package dans le pom permet de dire que les mutations vont se porter 
 ### ComplexityLocator ###
 "ComplexityLocator" permet de choisir si l'on mute une classe ou non en fonction d'une majoration de sa complexité cyclomatique.
 
-INTRODUIRE CODE / IMAGE
 
 ### LoCLocator ###
-"LoCLocator" choisis les classes où le nombre de lignes de codes est supérieur a 35 lignes / methodes (et donc les classes où on est susceptible de faire des erreurs).
+"LoCLocator" choisit les classes où le nombre de lignes de codes est supérieur à 35 lignes par methodes, et donc les classes où on est susceptible de faire des erreurs.
 
 ### RandomLocator ###
-"RandomLocator" choisis pour vous de maniére aléatoire le fait qu'un élement soit muter.
+"RandomLocator" choisit de manière aléatoire le fait qu'un élément soit muté.
 
 ## 4. Intégration dans un projet "demo" ##
-L'utilisation du frameword µTest est relativement simple, et consiste en deux étapes : l'édition du pom.xml, et l'exécution.
+L'utilisation du framework µTest est relativement simple, et consiste en deux étapes : l'édition du pom.xml, et l'exécution.
+
 ### Edition du pom.xml ###
 Il est nécessaire de modifier le pom.xml du projet maven que l'on souhaite faire muter. Il faut juste ajouter la balise plugin correspondant au framework µTest.
 ~~~xml
@@ -225,8 +226,8 @@ Le framework µTest a aussi besoin d'une balise <configuration> qui spécifie le
 	</packages>
 </configuration>
 ~~~
-µTest feras toutes les combinaisons entre les processeur et les locaters ce qui donnes : nb_mutant = nbProcessors * (nbLocators+nbPackages)
-le nombre de mutant est donc proportionnel à la taille du projet.
+µTest fera toutes les combinaisons entre les processeurs et les selecteurs ce qui donne : nb_mutant = nb_processors * (nb_locators + nb_packages)
+Le nombre de mutant est donc proportionnel à la taille du projet.
 
 Ce qui pourrait donner, par exemple :
 
@@ -268,13 +269,14 @@ Ce qui pourrait donner, par exemple :
 ~~~
 
 ### Exécution ###
-l'exécution se passe de la maniére suivante :
-* étapes :
-    * generate-mutations
-    * compile-mutations
-    * compile (critical)
-    * test (critical)
-    * mutation-test
-    * generate-report
 
-critical : si cette étape ne réussit pas elle stoppe la chaîne de build/
+L'exécution se déroule de la manière suivante :
+
+	generate-mutations
+	compile-mutations
+	compile *
+	test *
+	mutation-test
+	generate-report
+
+* : si cette étape ne réussit pas elle stoppe la chaîne de build.
