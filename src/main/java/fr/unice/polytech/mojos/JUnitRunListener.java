@@ -22,17 +22,20 @@ public class JUnitRunListener extends RunListener {
 
     @Override
     public void testStarted(Description description) throws Exception {
+        // for each test, increase number of executed test
         this.testExecuted += 1;
     }
 
     @Override
     public void testFailure(Failure failure) throws Exception {
+        // for each failed test, increase number of failed test
         failure.getDescription().getMethodName();
         this.testFailed += 1;
     }
 
     @Override
     public void testRunStarted(Description description) throws Exception {
+        // for each test started, increase number of started test
         this.testStarted += 1;
     }
 

@@ -16,7 +16,9 @@ public class PackageLocator implements Locator {
 
     @Override
     public boolean toBeProcessed(CtClass ctClass) {
+        // get name
         String[] name = ctClass.getQualifiedName().split("\\.");
+        // get package
         String[] packageSplit = packageName.split("\\.");
         if(name.length < 2)
         {
@@ -24,6 +26,7 @@ public class PackageLocator implements Locator {
             name[0] = "";
             name[1] = ctClass.getSimpleName();
         }
+        // ensure package name not empty
         if(packageSplit.length == 0)
         {
             packageSplit = new String[1];

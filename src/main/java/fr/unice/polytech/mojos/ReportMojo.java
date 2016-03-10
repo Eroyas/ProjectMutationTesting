@@ -30,7 +30,7 @@ public class ReportMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         try {
-            System.out.println("#### REPORT MOJO ####\n...");
+            System.out.println("[MU-TEST] ##### REPORT MOJO #####\n");
             TransformerFactory factory = TransformerFactory.newInstance();
 
             xmlFusion();
@@ -49,9 +49,7 @@ public class ReportMojo extends AbstractMojo {
             Transformer transformer = factory.newTransformer(xslDoc);
             transformer.transform(xmlDoc, new StreamResult(htmlFile));
 
-            //Comparator.filesComparator((String) project.getCompileSourceRoots().get(0));
-
-            System.out.println("OK \n#### REPORT MOJO ####");
+            System.out.println("\n[MU-TEST] ##### REPORT MOJO #####");
 
         } catch (TransformerException | IOException e) {
             e.printStackTrace();

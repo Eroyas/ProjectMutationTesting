@@ -32,26 +32,30 @@ public class TestMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = false)
     private MavenProject project;
 
-    private String qualifiedName;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        File[] mutants = FileUtils.list(project.getBasedir()+"/target/mutants/");
-        if(!Files.exists(Paths.get(project.getBasedir()+"/target/surefire-reports/mutants/")))
-        {
-            new File(project.getBasedir()+"/target/surefire-reports/mutants/").mkdirs();
+        // get all mutants
+        File[] mutants = FileUtils.list(project.getBasedir() + "/target/mutants/");
+
+        if (!Files.exists(Paths.get(project.getBasedir() + "/target/surefire-reports/mutants/"))) {
+            new File(project.getBasedir() + "/target/surefire-reports/mutants/").mkdirs();
         }
+
+        // run through all mutants
         for (File fi : mutants) {
+            // init nales
             List<String> names = new ArrayList<>();
             Iterator<Artifact> it = project.getDependencyArtifacts().iterator();
             URL[] urls = new URL[project.getDependencyArtifacts().size() + 3];
             Artifact a;
             int i = 0;
+            // run through all artifacts
             while (it.hasNext()) {
                 a = it.next();
                 try {
+                    // get file paths
                     urls[i] = Paths.get(a.getFile().getAbsolutePath()).toUri().toURL();
-                    System.out.println(urls[i]);
                     i++;
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -61,89 +65,47 @@ public class TestMojo extends AbstractMojo {
             try {
 
                 urls[i] = Paths.get(fi.getAbsolutePath()).toUri().toURL();
-                System.out.println(urls[i]);
                 urls[i + 1] = Paths.get(project.getBasedir() + "/target/test-classes/").toUri().toURL();
-                System.out.println(urls[i + 1]);
                 urls[i + 2] = Paths.get(System.getProperty("java.home") + "/lib/ext/").toUri().toURL();
 
-
                 URLClassLoader cl = new URLClassLoader(urls);
-                System.out.println(project.getSystemClasspathElements());
-                qualifiedName = "";
-/*
-                Files.walk(Paths.get(project.getBasedir().toString() + "/target/test-classes/")).forEach(filePath -> {
-                    if(filePath.getFileName().toString().endsWith(".class")) {
-                        qualifiedName = qualifiedName +filePath.getFileName().toString();
-                    }
-                    else
-                    {
-                        qualifiedName = qualifiedName + filePath.getFileName().toString() + ".";
 
-                    }
-                    if (Files.isRegularFile(filePath)) {
-                        String nameWithFolder = ((qualifiedName).substring(0,qualifiedName.lastIndexOf('.')));
-                        System.out.println("################# adding to test : " + nameWithFolder);
-                        names.add(nameWithFolder);
-                        qualifiedName = "";
-                    }
-                });
-*/
-                listClasses(project.getBasedir()+"/target/test-classes",names);
-                System.out.println(names);
+                listClasses(project.getBasedir() + "/target/test-classes", names);
 
-                System.out.println("################ test : "+names);
+                System.out.println("[MU-TEST] Testing : " + names);
+                // get class
                 Class<?> classRunner = Class.forName("fr.unice.polytech.mojos.IsolatedTestRunner", true, cl);
+                // invoke constructor
                 Object runner = classRunner.getConstructor(String.class).newInstance(project.getBasedir() + "/target/surefire-reports/mutants/" + fi.getName());
+                // get method runTests
                 Method runMethod = classRunner.getMethod("runTests", List.class, URLClassLoader.class);
+                // invoke it
                 runMethod.invoke(runner, names, cl);
 
-/*
-            Class<?> classRunner = Class.forName("org.junit.runner.JUnitCore",true,cl);
-            Method runMethod = classRunner.getMethod("main", String[].class);
-            runMethod.invoke(null,new String[] { "tester.IsoTest"});
-*/
-            } catch (MalformedURLException e1) {
-                e1.printStackTrace();
-            } catch (DependencyResolutionRequiredException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void listClasses(String path,List<String> files)
-    {
-        //System.out.println("###################### !!!!!!! paths !!!!!! : "+path);
+    private void listClasses(String path, List<String> files) {
         File base = new File(path);
         File[] tab = base.listFiles();
         String concat;
-        for(File f : tab)
-        {
-            concat = path +"/"+f.getName();
-            if(concat.endsWith(".class"))
-            {
+        // run through all content file
+        for (File f : tab) {
+            concat = path + "/" + f.getName();
+            // put name into list if its a class file
+            if (concat.endsWith(".class")) {
                 String toSearch = "target/test-classes/";
-                String s = concat.substring(concat.indexOf(toSearch)+toSearch.length(),concat.lastIndexOf(".class")).replace('/','.');
-
+                String s = concat.substring(concat.indexOf(toSearch) + toSearch.length(), concat.lastIndexOf(".class")).replace('/', '.');
                 files.add(s);
                 return;
             }
-            if(Files.isDirectory(Paths.get(concat)))
-            {
-                listClasses(concat,files);
+            // otherwise recall method on the dir
+            if (Files.isDirectory(Paths.get(concat))) {
+                listClasses(concat, files);
             }
         }
-
     }
 }

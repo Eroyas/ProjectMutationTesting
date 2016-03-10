@@ -24,9 +24,11 @@ public class CodeMetrics {
         CtMethod meth;
         double complexity = 0;
 
+        // run through all methods
         while(it.hasNext())
         {
             meth = it.next();
+            // compute complexity depending on number of if, switch and for/while
             complexity = complexity +
                     (meth.getBody().getElements(new TypeFilter<>(CtIf.class)).size() +
                     meth.getBody().getElements(new TypeFilter<>(CtSwitch.class)).size() +
@@ -45,9 +47,11 @@ public class CodeMetrics {
         CtMethod meth;
         int lines = 0;
 
+        // run through all methods
         while(it.hasNext())
         {
             meth = it.next();
+            // compute line numbers
             lines = lines + meth.getBody().getStatements().size();
         }
         return (lines / cl.getMethods().size());

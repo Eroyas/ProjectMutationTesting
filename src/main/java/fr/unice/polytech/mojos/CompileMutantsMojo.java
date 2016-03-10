@@ -32,66 +32,84 @@ public class CompileMutantsMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+        // get file
         File f = new File(project.getBasedir().toString()+"/target/generated-sources/mutations");
+        // create directory if not existing
         if(!f.exists())
         {
             f.mkdirs();
         }
+        // list content
         File[] tab = f.listFiles();
 
-
+        // run through all files
         for (File fi : tab) {
+            // output directory
             String outputDirectory =  project.getBasedir().toString()+"/target/mutants/"+(fi.getAbsolutePath().substring(fi.getAbsolutePath().lastIndexOf("/"),fi.getAbsolutePath().length()));
+
+            // get java compiler
             JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+
+            // init list option
             List<String> optionList = new ArrayList<>();
+
+            // init diagnostic collector
             DiagnosticCollector<JavaFileObject> diagnosticsCollector = new DiagnosticCollector<JavaFileObject>();
+
+            // get standard FM
             StandardJavaFileManager fm = compiler.getStandardFileManager(diagnosticsCollector, null, null);
+
+            // init names list
             List<String> names = new ArrayList<>();
             try {
-
+                // for all files
                 Files.walk(Paths.get(fi.getAbsolutePath())).forEach(filePath -> {
                     if (Files.isRegularFile(filePath)) {
-                        System.out.println("compiling : " + filePath.toString());
+                        System.out.println("[MU-TEST] Compiling : " + filePath.toString());
+                        // add the name to the lsit
                         names.add(filePath.toString());
                     }
                 });
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            // get file objects
             Iterable<? extends JavaFileObject> compUnits = fm.getJavaFileObjectsFromStrings(names);
-// set compiler's classpath to be same as the runtime's
-
+            // init iterator
             Iterator<Artifact> it = project.getDependencyArtifacts().iterator();
+            // init dependencies
             List<String> dependencies = new ArrayList<>();
             dependencies.add("-classpath");
+
             Artifact a;
             String cp = System.getProperty("java.class.path");
+            // run through all artifact
             while (it.hasNext()) {
                 a = it.next();
                 cp = cp +":"+a.getFile().getAbsolutePath();
             }
             dependencies.add(cp);
-            System.out.println(cp);
-                    optionList.addAll(dependencies);
+            System.out.println("[MU-TEST] Dependency found : " + cp);
+            optionList.addAll(dependencies);
+            // create target dir
             File targetFile = new File(outputDirectory);
             if (!targetFile.exists()) {
                 targetFile.mkdirs();
             }
             optionList.addAll(Arrays.asList("-d",outputDirectory));
+            // call compiler
             JavaCompiler.CompilationTask task = compiler.getTask(null, fm, diagnosticsCollector, optionList, null, compUnits);
             task.call();
+            // if no error
             if(diagnosticsCollector.getDiagnostics().size() != 0)
             {
-                System.out.println(diagnosticsCollector.getDiagnostics());
-                System.out.println("########## mutant : " + fi.getAbsolutePath() + " is stillborn");
+                System.out.println("[MU-TEST] Mutant : " + fi.getAbsolutePath() + " is well born !");
                 try {
                     Files.delete(Paths.get(project.getBasedir()+"/target/mutants/"+fi.getName()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
-
         }
     }
 }
