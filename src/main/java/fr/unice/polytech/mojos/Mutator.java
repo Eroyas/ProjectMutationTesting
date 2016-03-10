@@ -23,12 +23,11 @@ public class Mutator {
         this.path = path;
     }
 
-    public void mutate(Locator locator,AbstractProcessor processor,String[] spoonClassPath) {
+    public void mutate(Locator locator,AbstractProcessor processor) {
         int processingDector = 0;
         Launcher launcher = new Launcher();
         launcher.addInputResource("src/main/java");
         launcher.setSourceOutputDirectory(path + "/src/main/java");
-        launcher.getModelBuilder().setSourceClasspath(spoonClassPath);
         launcher.run();
         //launcher.buildModel();
         Factory factory = launcher.getFactory();

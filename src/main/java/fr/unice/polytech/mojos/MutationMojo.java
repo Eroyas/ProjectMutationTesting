@@ -65,7 +65,7 @@ public class MutationMojo extends AbstractMojo {
 
             List<String> names = new ArrayList<>();
             Iterator<Artifact> it = project.getDependencyArtifacts().iterator();
-            String[] spoonClassPath = new String[project.getDependencyArtifacts().size()];
+            String[] spoonClassPath = new String[project.getDependencyArtifacts().size()+1];
             Artifact a;
             int r = 0;
             while (it.hasNext()) {
@@ -74,7 +74,8 @@ public class MutationMojo extends AbstractMojo {
                     // System.out.println(urls[j]);
                 r++;
             }
-
+            spoonClassPath[r] = project.getBasedir().getAbsolutePath() + "/target/classes";
+            spoonClassPath[r] = project.getBasedir().getAbsolutePath() + "/target/test-classes";
 
         for (int i=0; i < processors.size();i++)
         {
@@ -82,7 +83,7 @@ public class MutationMojo extends AbstractMojo {
             {
                 mutator = new Mutator( project.getBasedir().toString()+"/target/generated-sources/mutations/m"+ mutationsNumberCopy);
 
-                    mutator.mutate((Locator)Class.forName("fr.unice.polytech.locators."+locators.get(j)).newInstance(),(AbstractProcessor)Class.forName("fr.unice.polytech.spoonProcesses."+processors.get(i)).newInstance(),spoonClassPath);
+                    mutator.mutate((Locator)Class.forName("fr.unice.polytech.locators."+locators.get(j)).newInstance(),(AbstractProcessor)Class.forName("fr.unice.polytech.spoonProcesses."+processors.get(i)).newInstance());
                 /*
                 Object runner = classRunner.getConstructor(String.class).newInstance(project.getBasedir().toString()+"/target/generated-sources/mutations/m"+ mutationsNumberCopy);
                 Method runMethod = classRunner.getMethod("mutate", Class.forName("fr.unice.polytech.locators.Locator",true,cl),Class.forName("spoon.processing.AbstractProcessor",true,cl));
@@ -93,7 +94,7 @@ public class MutationMojo extends AbstractMojo {
 
             for (String aPackage : packages) {
                 mutator = new Mutator(project.getBasedir().toString() + "/target/generated-sources/mutations/m" + mutationsNumberCopy);
-                mutator.mutate((Locator) Class.forName("fr.unice.polytech.locators.PackageLocator").getConstructor(String.class).newInstance(aPackage), (AbstractProcessor) Class.forName("fr.unice.polytech.spoonProcesses." + processors.get(i)).newInstance(),spoonClassPath);
+                mutator.mutate((Locator) Class.forName("fr.unice.polytech.locators.PackageLocator").getConstructor(String.class).newInstance(aPackage), (AbstractProcessor) Class.forName("fr.unice.polytech.spoonProcesses." + processors.get(i)).newInstance());
                 mutationsNumberCopy--;
             }
         }

@@ -83,7 +83,7 @@
                                     color : 'red',
                                 }, {
                                     name: 'Success',
-                                    y:  <xsl:value-of select="$varTests"/>,
+                                    y:  <xsl:value-of select="$varSuccess"/>,
                                     sliced: true,
                                     selected: true,
                                     color : 'green',

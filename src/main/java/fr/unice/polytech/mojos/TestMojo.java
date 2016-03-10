@@ -33,6 +33,7 @@ public class TestMojo extends AbstractMojo {
     private MavenProject project;
 
     private String qualifiedName;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         File[] mutants = FileUtils.list(project.getBasedir()+"/target/mutants/");
@@ -69,14 +70,28 @@ public class TestMojo extends AbstractMojo {
                 URLClassLoader cl = new URLClassLoader(urls);
                 System.out.println(project.getSystemClasspathElements());
                 qualifiedName = "";
+/*
                 Files.walk(Paths.get(project.getBasedir().toString() + "/target/test-classes/")).forEach(filePath -> {
-                     qualifiedName = qualifiedName + filePath.getFileName().toString() + ".";
+                    if(filePath.getFileName().toString().endsWith(".class")) {
+                        qualifiedName = qualifiedName +filePath.getFileName().toString();
+                    }
+                    else
+                    {
+                        qualifiedName = qualifiedName + filePath.getFileName().toString() + ".";
+
+                    }
                     if (Files.isRegularFile(filePath)) {
-                        String nameWithFolder = ((qualifiedName).substring(qualifiedName.indexOf('.')+1,qualifiedName.length()-1));
-                        System.out.println("################# adding to test : " + nameWithFolder.substring(0,nameWithFolder.lastIndexOf('.')));
-                        names.add(nameWithFolder.substring(0,nameWithFolder.lastIndexOf('.')));
+                        String nameWithFolder = ((qualifiedName).substring(0,qualifiedName.lastIndexOf('.')));
+                        System.out.println("################# adding to test : " + nameWithFolder);
+                        names.add(nameWithFolder);
+                        qualifiedName = "";
                     }
                 });
+*/
+                listClasses(project.getBasedir()+"/target/test-classes",names);
+                System.out.println(names);
+
+                System.out.println("################ test : "+names);
                 Class<?> classRunner = Class.forName("fr.unice.polytech.mojos.IsolatedTestRunner", true, cl);
                 Object runner = classRunner.getConstructor(String.class).newInstance(project.getBasedir() + "/target/surefire-reports/mutants/" + fi.getName());
                 Method runMethod = classRunner.getMethod("runTests", List.class, URLClassLoader.class);
@@ -105,5 +120,30 @@ public class TestMojo extends AbstractMojo {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void listClasses(String path,List<String> files)
+    {
+        //System.out.println("###################### !!!!!!! paths !!!!!! : "+path);
+        File base = new File(path);
+        File[] tab = base.listFiles();
+        String concat;
+        for(File f : tab)
+        {
+            concat = path +"/"+f.getName();
+            if(concat.endsWith(".class"))
+            {
+                String toSearch = "target/test-classes/";
+                String s = concat.substring(concat.indexOf(toSearch)+toSearch.length(),concat.lastIndexOf(".class")).replace('/','.');
+
+                files.add(s);
+                return;
+            }
+            if(Files.isDirectory(Paths.get(concat)))
+            {
+                listClasses(concat,files);
+            }
+        }
+
     }
 }
