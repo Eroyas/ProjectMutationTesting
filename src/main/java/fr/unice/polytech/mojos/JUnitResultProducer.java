@@ -43,7 +43,6 @@ public class JUnitResultProducer {
                 myContent.append("name=\"" + methods[j].getName() + "\">\n");
 
                 for (int k = 0; k < result.getFailures().size(); k++) {
-                    System.out.println("################ meth de test :" + methods[j].getName() + "############## failure :" +result.getFailures().get(k).getDescription().getMethodName() );
                     if (methods[j].getName().equalsIgnoreCase(result.getFailures().get(k).getDescription().getMethodName())) {
                         myContent.append("<failure type=\"" + result.getFailures().get(k).getException() + "\">");
                         myContent.append("</failure>\n");
