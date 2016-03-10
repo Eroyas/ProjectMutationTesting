@@ -13,10 +13,10 @@ import java.util.Scanner;
  * Created by Eroyas on 09/03/16.
  */
 public class Comparator {
-    @Parameter(defaultValue = "${project}", required = true, readonly = false)
-    private MavenProject project;
 
-    public static void filesComparator() throws IOException {
+
+
+    public static void filesComparator(String pathSource) throws IOException {
 
         File[] mDir = FileUtils.list("target/generated-sources/mutations/");
         List<File> mRootFiles = new ArrayList<>();
@@ -26,7 +26,7 @@ public class Comparator {
             }
         }
 
-        File sDir = new File("src/main/java");
+        File sDir = new File(pathSource);
         File[] sFiles = sDir.listFiles();
 
 

@@ -5,6 +5,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 
 import javax.xml.stream.*;
 import javax.xml.stream.events.XMLEvent;
@@ -20,6 +22,11 @@ import java.util.List;
  */
 @Mojo(name = "generate-report", defaultPhase = LifecyclePhase.PACKAGE)
 public class ReportMojo extends AbstractMojo {
+
+    @Parameter(defaultValue = "${project}", required = true, readonly = false)
+    private MavenProject project;
+
+
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -44,7 +51,7 @@ public class ReportMojo extends AbstractMojo {
             Transformer transformer = factory.newTransformer(xslDoc);
             transformer.transform(xmlDoc, new StreamResult(htmlFile));
 
-            Comparator.filesComparator();
+            Comparator.filesComparator((String) project.getCompileSourceRoots().get(0));
 
             System.out.println("OK \n#### REPORT MOJO ####");
 
