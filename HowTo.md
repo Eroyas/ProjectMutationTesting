@@ -9,13 +9,15 @@
 	* Compiler et exécuter les mutants
 	* Produire un rapport HTML
 2. Des processeurs
-	* LIST
-	* LIST
-	* LIST
+	* Processeur BinaryOpMutation
+	* Processeur BinaryOpLoop
+	* Processeurs IfCondTrueMutation & IfCondFalseMutation
+	* Processeur ScopeFieldMutation
+	* Processeur ThisRemovalMutation
+	* Processeur UnaryIncrementMutation
 3. Des sélecteurs
-	* LIST
-	* LIST
-	* LIST
+	* Package
+	* ComplexityLocator
 4. Intégration dans un projet "demo"
 	* Edition du pom.xml
 	* Exécution
@@ -133,7 +135,10 @@ Les sélecteurs sont "??????". Le framework µTest dispose de diférents type de
 ### Package ###
 Définir un package dans le pom permet de dire que les mutations vont se porter uniquement sur les classes du package spécifié. Il est possible de définir plusieurs balises <package> englobées d'une unique balise <packages>.
 
-### Sélecteur Y ###
+### ComplexityLocator ###
+"ComplexityLocator" permet de choisir si l'on mute une classe ou non en fonction d'une majoration de sa complexité cyclomatique.
+
+INTRODUIRE CODE / IMAGE
 
 ## 4. Intégration dans un projet "demo" ##
 L'utilisation du frameword µTest est relativement simple, et consiste en deux étapes : l'édition du pom.xml, et l'exécution.
