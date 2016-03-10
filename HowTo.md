@@ -94,11 +94,11 @@ xmlDoc = new FileWriter("target/surefire-reports/TestsReport.xml");
 
 Pour convertir cet unique XML en HTML, on utilise une transformation XSL qui nous permet d'afficher le nombre total de tests effectués, le nombre total de tests en erreur, et le nombre total de tests qui ont réussis. Ensuite, on afficher le résultat, test par test, en détaillant pour chacun ceux qui ont réussi et ceux qui ont échoué.
 
-################ IMAGE DU DOSSIER RESOURCES AVEC LE FICHIER xslDoc.xsl
 
 De manière à avoir un rendu plus esthétique et plus lisible, on utilise Bootstrap  pour afficher les informations en couleurs (Vert les tests sont OK, jaune ignorés, rouge échoués, et noir "mort-nés"). HighChart permet une lecture plus aisée des résultats puisque l'on les affiche  sous forme de diagramme circulaire.
 
-################ IMAGE SITE DU PROJET OGL
+![stats generales](https://github.com/Eroyas/ProjectMutationTesting/blob/master/12162160_10153847054747900_1420577710_o.jpg)
+![stats detaillées](https://github.com/Eroyas/ProjectMutationTesting/blob/master/12349650_10153847054992900_562291947_o.jpg)
 
 
 
