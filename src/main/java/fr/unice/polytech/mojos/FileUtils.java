@@ -3,12 +3,29 @@ package fr.unice.polytech.mojos;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author tijani on 08/03/16.
  */
 public class FileUtils {
 
+    public static void listeRepertoire(File path, List<String> allFiles) {
+
+        if (path.isDirectory()) {
+            File[] list = path.listFiles();
+            if (list != null) {
+                for (int i = 0; i < list.length; i++) {
+                    listeRepertoire(list[i], allFiles);
+                }
+            } else {
+                System.err.println(path + " : Erreur de lecture.");
+            }
+        } else {
+            String currentFilePath = path.getAbsolutePath();
+            allFiles.add(currentFilePath);
+        }
+    }
 
     public static File[] list(String path)
     {

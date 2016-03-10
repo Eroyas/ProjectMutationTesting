@@ -26,8 +26,6 @@ public class ReportMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", required = true, readonly = false)
     private MavenProject project;
 
-
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -51,7 +49,7 @@ public class ReportMojo extends AbstractMojo {
             Transformer transformer = factory.newTransformer(xslDoc);
             transformer.transform(xmlDoc, new StreamResult(htmlFile));
 
-            Comparator.filesComparator((String) project.getCompileSourceRoots().get(0));
+            // Comparator.filesComparator((String) project.getCompileSourceRoots().get(0));
 
             System.out.println("OK \n#### REPORT MOJO ####");
 

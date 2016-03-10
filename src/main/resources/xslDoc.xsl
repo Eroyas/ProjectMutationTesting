@@ -175,6 +175,7 @@
 
                     <table class="table table-striped table-hover ">
                         <xsl:for-each select="root/testsuite">
+                            <br></br>
                             <tbody>
                                 <tr>
                                     <th>

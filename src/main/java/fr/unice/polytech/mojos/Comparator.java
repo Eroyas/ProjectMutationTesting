@@ -14,23 +14,34 @@ import java.util.Scanner;
  */
 public class Comparator {
 
-
-
     public static void filesComparator(String pathSource) throws IOException {
+
+        ArrayList<String> mFiles = new ArrayList<String>();
+        FileUtils.listeRepertoire(new File("target/generated-sources/mutations/"), mFiles);
+
+        ArrayList<String> sFiles = new ArrayList<String>();
+        FileUtils.listeRepertoire(new File(pathSource), sFiles);
 
         File[] mDir = FileUtils.list("target/generated-sources/mutations/");
         List<File> mRootFiles = new ArrayList<>();
+
         for(File mutantFolder : mDir) {
             for(File singleJava : mutantFolder.listFiles()) {
                 mRootFiles.add(singleJava);
             }
         }
 
-        File sDir = new File(pathSource);
-        File[] sFiles = sDir.listFiles();
+        File sPath = new File(pathSource);
+        File[] sDir = sPath.listFiles();
+        List<File> sRootFiles = new ArrayList<>();
 
+        for(File sourceFolder : sDir) {
+            for(File singleJava : sourceFolder.listFiles()) {
+                sRootFiles.add(singleJava);
+            }
+        }
 
-        for (File sFile : sFiles) {
+        for (File sFile : sRootFiles) {
             if (sFile.getAbsolutePath().endsWith(".java")) {
 
                 for (File mFile : mRootFiles) {
