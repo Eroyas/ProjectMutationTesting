@@ -64,7 +64,7 @@ public class DependencyResolutionMojo extends AbstractMojo {
         Iterator j = listRepositories.iterator();
 
         while(j.hasNext()) {
-            Element current = (Element)i.next();
+            Element current = (Element)j.next();
 
             current.addContent(jdomPlugin.getRacine().getChildren("repository", ns));
         }

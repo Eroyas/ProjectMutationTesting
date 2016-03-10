@@ -3,8 +3,6 @@ package fr.unice.polytech.mojos;
 import java.io.*;
 import org.jdom.*;
 import org.jdom.input.*;
-import java.util.List;
-import java.util.Iterator;
 
 /**
  * Created by Eroyas on 10/03/16.
