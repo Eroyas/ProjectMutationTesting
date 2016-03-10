@@ -1,5 +1,6 @@
 package fr.unice.polytech.mojos;
 
+import fr.unice.polytech.mojos.util.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;

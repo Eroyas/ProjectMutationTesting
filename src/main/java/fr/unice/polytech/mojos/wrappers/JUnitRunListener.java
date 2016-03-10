@@ -1,4 +1,4 @@
-package fr.unice.polytech.mojos;
+package fr.unice.polytech.mojos.wrappers;
 
 import org.junit.runner.Description;
 import org.junit.runner.Result;

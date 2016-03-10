@@ -1,8 +1,7 @@
-package fr.unice.polytech.mojos;
+package fr.unice.polytech.locators;
 
 import spoon.reflect.code.*;
 import spoon.reflect.declaration.CtClass;
-import spoon.reflect.declaration.CtElement;
 import spoon.reflect.declaration.CtMethod;
 import spoon.reflect.visitor.filter.TypeFilter;
 

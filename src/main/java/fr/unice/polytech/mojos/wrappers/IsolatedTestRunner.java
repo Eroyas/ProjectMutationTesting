@@ -1,4 +1,4 @@
-package fr.unice.polytech.mojos;
+package fr.unice.polytech.mojos.wrappers;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
@@ -43,7 +43,7 @@ public class IsolatedTestRunner {
             // launch tests
             Result result = jUnitCore.run(classes);
             // produce result
-            JUnitResultProducer.getResultContent(this.path,result, classes);
+            JUnitResultProducer.getResultContent(this.path, result, classes);
 
             System.out.println("[MU-TEST] \n##### ISOLATED TEST RUNNER DONE #####");
         } catch (Exception e) {}

@@ -1,6 +1,8 @@
-package fr.unice.polytech.mojos;
+package fr.unice.polytech.mojos.wrappers;
 
 import fr.unice.polytech.locators.Locator;
+import fr.unice.polytech.mojos.util.FileUtils;
+import fr.unice.polytech.mojos.MutationMojo;
 import spoon.Launcher;
 import spoon.processing.AbstractProcessor;
 import spoon.reflect.declaration.CtClass;
@@ -9,7 +11,6 @@ import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.io.*;
-import java.net.URL;
 import java.util.List;
 
 /**
