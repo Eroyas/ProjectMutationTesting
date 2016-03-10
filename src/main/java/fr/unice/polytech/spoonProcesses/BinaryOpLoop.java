@@ -16,12 +16,14 @@ public class BinaryOpLoop extends BinaryOpMutation {
 
     @Override
     public boolean isToBeProcessed(CtElement candidate) {
+        // if the candidate doesn't match, return
         if (!(candidate instanceof CtBinaryOperator))
         {
             return false;
         }
         else
         {
+            // check if the candidate's parent is a loop
             CtLoop ctFor = candidate.getParent(new TypeFilter<>(CtLoop.class));
             return ctFor != null;
         }

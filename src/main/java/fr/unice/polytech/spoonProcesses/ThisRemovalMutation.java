@@ -17,11 +17,11 @@ public class ThisRemovalMutation extends AbstractProcessor<CtElement> {
 
     @Override
     public void process(CtElement candidate) {
+        // if the candidate doesn't match, return
         if (!(candidate instanceof CtThisAccess)) {
             return;
         }
-        System.out.println("init : " + candidate.isParentInitialized());
-        System.out.println("THIS : " + candidate);
+        // remove "this"
         candidate.delete();
     }
 }

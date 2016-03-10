@@ -19,9 +19,12 @@ public class ScopeFieldMutation extends AbstractProcessor<CtElement> {
 
     @Override
     public void process(CtElement ctField) {
+        // if the candidate doesn't match, return
         if (!(ctField instanceof CtField)) {
             return;
         }
+
+        // set visibility to "final"
         CtField op = (CtField)ctField;
         op.setVisibility(ModifierKind.FINAL);
     }

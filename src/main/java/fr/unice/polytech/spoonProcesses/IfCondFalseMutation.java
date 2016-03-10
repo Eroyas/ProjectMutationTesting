@@ -17,10 +17,12 @@ public class IfCondFalseMutation extends AbstractProcessor<CtElement> {
 
     @Override
     public void process(CtElement candidate) {
+        // if the candidate doesn't match, return
         if (!(candidate instanceof CtIf)) {
             return;
         }
 
+        // replace if condition by "false"
         CtIf op = (CtIf) candidate;
         op.getCondition().replace(new CtLiteralImpl<Boolean>().setValue(false));
     }
