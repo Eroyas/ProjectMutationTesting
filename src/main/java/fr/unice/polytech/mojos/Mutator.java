@@ -9,6 +9,7 @@ import spoon.reflect.factory.Factory;
 import spoon.reflect.visitor.filter.TypeFilter;
 
 import java.io.*;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -22,15 +23,16 @@ public class Mutator {
         this.path = path;
     }
 
-    public void mutate(Locator locator,AbstractProcessor processor) {
+    public void mutate(Locator locator,AbstractProcessor processor,String[] spoonClassPath) {
         int processingDector = 0;
         Launcher launcher = new Launcher();
         launcher.addInputResource("src/main/java");
-        launcher.setSourceOutputDirectory(path+"/src/main/java");
-
+        launcher.setSourceOutputDirectory(path + "/src/main/java");
+        launcher.getModelBuilder().setSourceClasspath(spoonClassPath);
         launcher.run();
         //launcher.buildModel();
         Factory factory = launcher.getFactory();
+
         List<CtClass> ctClasses = factory.Package().getRootPackage().getElements(new TypeFilter<>(CtClass.class));
         System.out.println("######### mutant : " + path);
         for (CtClass origClass : ctClasses) {

@@ -1,5 +1,6 @@
 package fr.unice.polytech.mojos;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -11,11 +12,13 @@ import org.apache.maven.project.MavenProject;
 import javax.tools.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -57,7 +60,19 @@ public class CompileMutantsMojo extends AbstractMojo {
             }
             Iterable<? extends JavaFileObject> compUnits = fm.getJavaFileObjectsFromStrings(names);
 // set compiler's classpath to be same as the runtime's
-            optionList.addAll(Arrays.asList("-classpath", System.getProperty("java.class.path")));
+
+            Iterator<Artifact> it = project.getDependencyArtifacts().iterator();
+            List<String> dependencies = new ArrayList<>();
+            dependencies.add("-classpath");
+            Artifact a;
+            String cp = System.getProperty("java.class.path");
+            while (it.hasNext()) {
+                a = it.next();
+                cp = cp +":"+a.getFile().getAbsolutePath();
+            }
+            dependencies.add(cp);
+            System.out.println(cp);
+                    optionList.addAll(dependencies);
             File targetFile = new File(outputDirectory);
             if (!targetFile.exists()) {
                 targetFile.mkdirs();
@@ -67,6 +82,7 @@ public class CompileMutantsMojo extends AbstractMojo {
             task.call();
             if(diagnosticsCollector.getDiagnostics().size() != 0)
             {
+                System.out.println(diagnosticsCollector.getDiagnostics());
                 System.out.println("########## mutant : " + fi.getAbsolutePath() + " is stillborn");
                 try {
                     Files.delete(Paths.get(project.getBasedir()+"/target/mutants/"+fi.getName()));

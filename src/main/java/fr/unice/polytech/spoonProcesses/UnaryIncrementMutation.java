@@ -25,7 +25,10 @@ public class UnaryIncrementMutation extends AbstractProcessor<CtElement> {
 
         CtForImpl ctFor = (CtForImpl) candidate;
         CtBinaryOperatorImpl expr = (CtBinaryOperatorImpl) ctFor.getExpression();
-        System.out.println( expr.getLeftHandOperand().S());
+        if(expr.getKind().equals(BinaryOperatorKind.LT) || expr.getKind().equals(BinaryOperatorKind.GT))
+        {
+            expr.setKind(BinaryOperatorKind.LE);
+        }
         System.out.println("############### EXPRESSION " + expr);
 
 
