@@ -59,19 +59,46 @@ Result result = jUnitCore.run(classes);
 ### Produire un rapport HTML ###
 La production de notre rapport au format HTML se fait en 4 étapes. Lors des tests effectués par le JUnitCore, on analyse le résultat de ces tests pour produire un XML par test grâce au "JUnitResultProducer".
 
-INTRODUIRE CODE / IMAGE
+~~~Java
+...
+JUnitCore jUnitCore = new JUnitCore();
+
+// Il ne faut pas oublier ici d'ajouter le listener.
+jUnitCore.addListener(new JUnitRunListener(classes.length));
+
+// On run les tests.
+Result result = jUnitCore.run(classes);
+
+// Et on produit le XML. (path qui est la destination du XML produit)
+JUnitResultProducer.getResultContent(path, result, classes);
+...
+~~~
 
 Une fois que tous les tests sont terminés, on récupère chaque fichier XML produits que l'on fusionne en un unique XML. Cette étape est effectué grâce à la methode "xmlFusion" de notre classe "ReportMojo".
 
-INTRODUIRE CODE / IMAGE
+~~~Java
+...
+// Par simple appel de la fonction :
+xmlFusion();
+...
+~~~
+~~~Java
+...
+// Dans celle-ci on defini les répertoires mutants et le fichier XML a produire :
+File[] dir = FileUtils.list("target/surefire-reports/mutants/");
+...
+xmlDoc = new FileWriter("target/surefire-reports/TestsReport.xml");
+...
+// Et on fusionne.
+~~~
 
 Pour convertir cet unique XML en HTML, on utilise une transformation XSL qui nous permet d'afficher le nombre total de tests effectués, le nombre total de tests en erreur, et le nombre total de tests qui ont réussis. Ensuite, on afficher le résultat, test par test, en détaillant pour chacun ceux qui ont réussi et ceux qui ont échoué.
 
-INTRODUIRE CODE / IMAGE
+################ IMAGE DU DOSSIER RESOURCES AVEC LE FICHIER xslDoc.xsl
 
 De manière à avoir un rendu plus esthétique et plus lisible, on utilise Bootstrap  pour afficher les informations en couleurs (Vert les tests sont OK, jaune ignorés, rouge échoués, et noir "mort-nés"). HighChart permet une lecture plus aisée des résultats puisque l'on les affiche  sous forme de diagramme circulaire.
 
-INTRODUIRE CODE / IMAGE
+################ IMAGE SITE DU PROJET OGL
 
 ## 2. Les processeurs ##
 
